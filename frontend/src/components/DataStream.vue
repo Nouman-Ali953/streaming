@@ -1,9 +1,7 @@
 <template>
     <div>
       <h1>Data Stream</h1>
-      <ul>
-        <li v-for="(chunk, index) in chunks" :key="index">{{ chunk }}</li>
-      </ul>
+      <p class="paragraph" v-html="formattedChunks"></p>
     </div>
   </template>
   
@@ -12,8 +10,14 @@
     name: "DataStream",
     data() {
       return {
-        chunks: []  // Array to store streamed data
+        chunks: []  // Array to store each word/phrase streamed from backend
       };
+    },
+    computed: {
+      formattedChunks() {
+        // Join the chunks with a space and return as HTML
+        return this.chunks.join(' '); // Join chunks with a space
+      }
     },
     mounted() {
       this.startStreaming();
@@ -23,7 +27,7 @@
         const eventSource = new EventSource("http://127.0.0.1:5000/api/stream");
         
         eventSource.onmessage = (event) => {
-          this.chunks.push(event.data);  // Append each chunk to chunks array
+          this.chunks.push(event.data);  // Append each word or chunk to the chunks array
         };
   
         eventSource.onerror = () => {
@@ -35,18 +39,17 @@
   </script>
   
   <style scoped>
+  .paragraph {
+    width: 98%;
+    display: block;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 16px;
+    line-height: 1.5;
+  }
   h1 {
     color: #333;
-  }
-  ul {
-    list-style-type: none;
-    padding: 0;
-  }
-  li {
-    padding: 8px;
-    background: #f4f4f4;
-    margin: 4px 0;
-    border-radius: 4px;
+    font-weight: bold;
   }
   </style>
   
